@@ -6,6 +6,8 @@ import time
 import urllib.parse
 import discord
 import os
+from threading import Thread
+from flask import Flask
 from collections import defaultdict
 from database_manager import DatabaseManager
 from game_ui import GameRecordView, DeckManageView, ResetRecordsView
@@ -19,6 +21,19 @@ TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 db_manager = DatabaseManager()
+
+# ===== Flaskサーバーを用意してポートを開く（Renderの要件） =====
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Ralmia is alive!"  # Webアクセスで確認用
+
+def run_flask():
+    port = int(os.environ.get("PORT", 8080))  # Renderが自動で設定する
+    app.run(host="0.0.0.0", port=port)
+
+Thread(target=run_flask).start()
 
 @bot.event
 async def on_ready():
