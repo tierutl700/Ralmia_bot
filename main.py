@@ -193,9 +193,6 @@ async def ララミア(ctx, *, prompt):
         save_message(player_id, "assistant", reply)
         await ctx.send(reply)
         
-    except openai.error.OpenAIError as e:
-        await ctx.send(f"Claude APIでエラーが発生しました: {e}")
-        
     except Exception as e:
         await ctx.send(f"⚠️ エラーが発生しました: {e}")
 
