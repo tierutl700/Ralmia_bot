@@ -26,7 +26,7 @@ def save_message(player_id, role, content):
     conn.commit()
     conn.close()
 
-def load_history(player_id, limit=20):
+def load_history(player_id, limit=10):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute(
