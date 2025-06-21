@@ -11,6 +11,8 @@ from database_manager import DatabaseManager
 from game_ui import GameRecordView, DeckManageView, ResetRecordsView
 from chat_history_manager import init_db, save_message, load_history, delete_history
 
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 init_db()
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
