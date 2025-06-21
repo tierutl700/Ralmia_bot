@@ -15,6 +15,7 @@ from chat_history_manager import init_db, save_message, load_history, delete_his
 
 openai.api_key = os.getenv("OPENROUTER_API_KEY")
 openai.api_base = "https://openrouter.ai/api/v1"
+
 init_db()
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
