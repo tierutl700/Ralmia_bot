@@ -24,7 +24,7 @@ db_manager = DatabaseManager()
 async def on_ready():
     print(f"ログイン成功: {bot.user}")
     print("SQLiteデータベース初期化完了！")
-
+    print("APIキー:", os.getenv("OPENAI_API_KEY"))
 
 @bot.command()
 async def record(ctx):
