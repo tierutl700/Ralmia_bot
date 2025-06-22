@@ -296,3 +296,5 @@ async def 機構解放(ctx):
         if roll <= chance:
             await ctx.send(f"{ctx.author.mention} ：\n{message}")
             break
+
+bot.run(TOKEN)
