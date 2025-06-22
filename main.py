@@ -183,7 +183,7 @@ async def ララミア(ctx, *, prompt):
 
     try:
         await ctx.typing()
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="anthropic/claude-3-sonnet-20240229",
             messages=messages # type: ignore
         )  
