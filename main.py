@@ -1,7 +1,6 @@
 import random
 import sqlite3
 from discord.ext import commands
-import openai
 import time
 import urllib.parse
 import discord
@@ -12,9 +11,14 @@ from collections import defaultdict
 from database_manager import DatabaseManager
 from game_ui import GameRecordView, DeckManageView, ResetRecordsView
 from chat_history_manager import init_db, save_message, load_history, delete_history
+from openai import OpenAI
 
-openai.api_key = os.getenv("OPENROUTER_API_KEY")
-openai.api_base = "https://openrouter.ai/api/v1"
+client = OpenAI(
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+    base_url="https://openrouter.ai/api/v1"
+)
+
+
 
 init_db()
 
@@ -183,9 +187,9 @@ async def ララミア(ctx, *, prompt):
 
     try:
         await ctx.typing()
-        response = openai.chat.completions.create(
-            model="anthropic/claude-3-sonnet-20240229",
-            messages=messages # type: ignore
+        response = client.chat.completions.create(
+    model="anthropic/claude-3-sonnet-20240229",
+    messages=messages
         )  
         reply = response.choices[0].message.content or "エラーで喋れなくなっちゃった…"
 
