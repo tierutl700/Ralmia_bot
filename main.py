@@ -14,8 +14,7 @@ from chat_history_manager import init_db, save_message, load_history, delete_his
 from openai import OpenAI
 
 client = OpenAI(
-    api_key=os.getenv("OPENROUTER_API_KEY"),
-    base_url="https://openrouter.ai/api/v1"
+    api_key=os.getenv("OPENAI_API_KEY"),
 )
 
 
@@ -188,7 +187,7 @@ async def ララミア(ctx, *, prompt):
     try:
         await ctx.typing()
         response = client.chat.completions.create(
-    model="mistralai/mistral-small-3.1-24b-instruct:free",
+    model="gpt-3.5-turbo",
     messages=messages
         )  
         reply = response.choices[0].message.content or "エラーで喋れなくなっちゃった…"
