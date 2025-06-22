@@ -188,7 +188,7 @@ async def ララミア(ctx, *, prompt):
     try:
         await ctx.typing()
         response = client.chat.completions.create(
-    model="anthropic/claude-3-sonnet-20240229",
+    model="openai/gpt-3.5-turbo",
     messages=messages
         )  
         reply = response.choices[0].message.content or "エラーで喋れなくなっちゃった…"
