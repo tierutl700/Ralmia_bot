@@ -1,3 +1,4 @@
 discord.py
 flask
 openai
+openai>=1.1.1
