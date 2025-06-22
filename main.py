@@ -292,16 +292,3 @@ async def 機構解放(ctx):
         if roll <= chance:
             await ctx.send(f"{ctx.author.mention} ：\n{message}")
             break
-
-
-while True:
- 
- try:
-     
-       if TOKEN is None:
-           print("エラー：DISCORD_BOT_TOKENが設定されていません。")
-           exit()
-       bot.run(TOKEN)
- except  Exception as e:
-       print(f"ABotが落ちました。再起動します: {e}")
-       time.sleep(5)
