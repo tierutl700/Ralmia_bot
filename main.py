@@ -190,6 +190,11 @@ async def ララミア(ctx, *, prompt):
     model="gpt-3.5-turbo",
     messages=messages
         )  
+
+        if not response or not response.choices:
+            await ctx.send("⚠️ モデルから返答がなかったよ…")
+            return
+        
         reply = response.choices[0].message.content or "エラーで喋れなくなっちゃった…"
 
         save_message(player_id, "assistant", reply)
