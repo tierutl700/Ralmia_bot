@@ -193,3 +193,74 @@ class ResetRecordsView(View):
     @discord.ui.button(label="キャンセル", style=discord.ButtonStyle.secondary, emoji="❌")
     async def cancel_reset(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("リセットをキャンセルしました。", ephemeral=True)
+
+class RateDeckSelectView(View):
+    def __init__(self, db_manager, player_id):
+        super().__init__(timeout=300)
+        self.db_manager = db_manager
+        self.player_id = player_id
+        self.add_item(RateDeckSelect(db_manager, player_id))
+
+class RateDeckSelect(Select):
+    def __init__(self, db_manager, player_id):
+        self.db_manager = db_manager
+        self.player_id = player_id
+
+        deck_list = db_manager.get_deck_list()
+
+        options = []
+        for deck_name in deck_list:
+            options.append(discord.SelectOption(
+                label=deck_name,
+                emoji="🎴",
+                value=deck_name
+            ))
+
+        if not options:
+            options = [discord.SelectOption(label="デッキが見つからなかったよ", value="none")]
+
+        super().__init__(placeholder="自分のデッキを選択...", options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        selected_deck = self.values[0]
+
+        if selected_deck == "none":
+            await interaction.response.send_message("デッキが見つからないよ", ephemeral=True)
+            return
+
+        conn = sqlite3.connect("game_records.db")
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT opponent_deck, result
+            FROM game_records
+            WHERE player_id = ? AND my_deck = ?
+        ''', (str(self.player_id), selected_deck))
+
+        rows = cursor.fetchall()
+        conn.close()
+
+        if not rows:
+            await interaction.response.send_message(f"デッキ **{selected_deck}** の対戦記録はまだないよ！", ephemeral=True)
+            return
+
+        # 集計
+        from collections import defaultdict
+        deck_stats = defaultdict(lambda: {"勝ち": 0, "負け": 0})
+        for opponent, result in rows:
+            deck_stats[opponent][result] += 1
+
+        # 整形
+        result_lines = []
+        for opponent, result in deck_stats.items():
+            total = result["勝ち"] + result["負け"]
+            win_rate = (result["勝ち"] / total) * 100 if total > 0 else 0
+            result_lines.append(f"vs **{opponent}**：{total}戦 {result['勝ち']}勝（勝率 {win_rate:.1f}%）")
+
+        embed = discord.Embed(
+            title=f"📊 {interaction.user.display_name} のデッキ「{selected_deck}」対戦統計",
+            description="\n".join(result_lines),
+            color=0x00ccff
+        )
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
