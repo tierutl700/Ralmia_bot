@@ -134,45 +134,15 @@ async def history(ctx):
     await ctx.send("🧾 **最新の会話履歴：**\n" + "\n".join(lines))
 
 @bot.command()
-async def total(ctx):
-    player_id =str(ctx.author.id)  # 呼び出し元ユーザーのID
-
-    # SQLite接続
-    conn = sqlite3.connect("game_records.db")
-    cursor = conn.cursor()
-
-    # ユーザーの全試合から「自分デッキ」「勝敗」を取得
-    cursor.execute('''
-        SELECT "opponent_deck", "result"
-        FROM game_records
-        WHERE player_id = ?
-     ''', (player_id,))
-
-    rows = cursor.fetchall()
-
-    if not rows:
-        await ctx.send("まだ対戦記録はないよ！")
+async def rate(ctx):
+    """指定デッキに対する相手デッキ毎の勝率を表示"""
+    deck_list = db_manager.get_deck_list()
+    if not deck_list:
+        await ctx.send("デッキリストが見つからないよ…")
         return
 
-    # デッキ別に勝敗を集計
-    deck_stats = defaultdict(lambda: {"勝ち": 0, "負け": 0})
-    for deck, result in rows:
-        deck_stats[deck][result] += 1
-
-    # 結果を整形
-    result_lines = []
-    for deck, result in deck_stats.items():
-        total = result["勝ち"] + result["負け"]
-        win_rate = (result["勝ち"] / total) * 100 if total > 0 else 0
-        result_lines.append(f"・{deck}：{total}戦 {result['勝ち']}勝（勝率 {win_rate:.1f}%）")
-
-    embed = discord.Embed(
-        title=f"📊 {ctx.author.display_name} の相手デッキ別統計",
-        description="\n".join(result_lines),
-        color=0x00ccff
-    )
-
-    await ctx.send(embed=embed)
+    embed = discord.Embed(title="📊 勝率統計", description="自分のデッキを選択してね！", color=0x00ccff)
+    await ctx.send(embed=embed, view=RateDeckSelectView(db_manager, ctx.author.id))
 
 @bot.command()
 
