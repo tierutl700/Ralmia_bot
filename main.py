@@ -9,7 +9,7 @@ from threading import Thread
 from flask import Flask
 from collections import defaultdict
 from database_manager import DatabaseManager
-from game_ui import GameRecordView, DeckManageView, ResetRecordsView
+from game_ui import GameRecordView, DeckManageView, ResetRecordsView, RateDeckSelectView
 from chat_history_manager import init_db, save_message, load_history, delete_history
 from openai import OpenAI
 
