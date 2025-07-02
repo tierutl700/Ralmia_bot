@@ -1,5 +1,6 @@
 
 import discord
+import sqlite3
 from discord.ui import Select, View, Button
 
 class GameRecordView(View):
